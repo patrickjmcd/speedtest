@@ -11,6 +11,7 @@ log_level = logging.DEBUG
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s -  - %(message)s", level=log_level)
 
+
 def setup_speedtest(server=None):
     """
     Initializes the Speed Test client with the provided server
@@ -40,9 +41,10 @@ def setup_speedtest(server=None):
     st.get_best_server()
 
     logging.info('Selected Server %s in %s',
-                st.best['id'], st.best['name'])
+                 st.best['id'], st.best['name'])
 
     return st
+
 
 def send_results(results):
     """
@@ -61,10 +63,9 @@ def send_results(results):
     if getenv("INFLUXDB_V2_URL"):
         client = InfluxDBClient.from_env_properties()
         write_api = client.write_api(write_options=SYNCHRONOUS)
-        if write_api.write("speedtests/autogen", 'patrickjmcd', pt):
-            logging.debug('Data written to InfluxDB')
-        else:
-            logging.error("Data not written to influxdb")
+        write_api.write("speedtests/autogen", 'patrickjmcd', pt)
+        logging.debug('Data written to InfluxDB')
+
 
 def run_speed_test(server=None):
     """
@@ -90,19 +91,19 @@ def run_speed_test(server=None):
     logging.info('Starting upload test')
     st.upload()
 
-
     send_results(st.results)
 
     results = st.results.dict()
     logging.info('Download: %sMbps - Upload: %sMbps - Latency: %sms',
-                round(results['download'] / 1000000, 2),
-                round(results['upload'] / 1000000, 2),
-                results['server']['latency']
-                )
+                 round(results['download'] / 1000000, 2),
+                 round(results['upload'] / 1000000, 2),
+                 results['server']['latency']
+                 )
 
 
 def run(server=None):
     run_speed_test(server)
+
 
 if __name__ == "__main__":
     run()
