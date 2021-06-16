@@ -1,10 +1,8 @@
-FROM python:alpine
+FROM python:3
 
-VOLUME /src/
-COPY influxspeedtest.py requirements.txt /src/
-ADD influxspeedtest /src/influxspeedtest
-WORKDIR /src
+WORKDIR /app
+ADD speedtest .
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
-CMD ["python", "-u", "/src/influxspeedtest.py"]
+CMD ["python", "main.py"]
